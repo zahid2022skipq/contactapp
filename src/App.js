@@ -1,32 +1,27 @@
-import "./App.css";
+import "./Css/App.css";
 import ListContacts from "./Components/Css/ListContacts";
+import { useEffect, useState } from "react";
+import * as ContactsApi from "./utils/ContactsAPI";
 
 function App() {
-  const contacts = [
-    {
-      id: "karen",
-      name: "Karen Isgrigg",
-      handle: "karen_isgrigg",
-      avatarURL: "http://localhost:5001/karen.jpg",
-    },
-    {
-      id: "richard",
-      name: "Richard Kalehoff",
-      handle: "richardkalehoff",
-      avatarURL: "http://localhost:5001/richard.jpg",
-    },
-    {
-      id: "tyler",
-      name: "Tyler McGinnis",
-      handle: "tylermcginnis",
-      avatarURL: "http://localhost:5001/tyler.jpg",
-    },
-  ];
+  const removeContact = (contact) => {
+    ContactsApi.remove(contact);
+    setContacts(contacts.filter((c) => c.id !== contact.id));
+  };
+
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    const getContacts = async () => {
+      const res = await ContactsApi.getAll();
+      setContacts(res);
+    };
+
+    getContacts();
+  }, []);
   return (
     <div>
-      {contacts.map((c) => (
-        <ListContacts contact={c.name} />
-      ))}
+      <ListContacts contact={contacts} onDeleteContact={removeContact} />
     </div>
   );
 }
